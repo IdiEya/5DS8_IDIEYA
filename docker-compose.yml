@@ -1,1 +1,38 @@
+services:
 
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - devops-network
+
+  backend:
+    build: ./backend
+    container_name: backend
+    depends_on:
+      - mysql-db
+    ports:
+      - "8081:8080"
+    networks:
+      - devops-network
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:4200"
+    networks:
+      - devops-network
+
+volumes:
+  mysql_data:
+
+networks:
+  devops-network:
